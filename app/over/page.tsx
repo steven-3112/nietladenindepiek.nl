@@ -166,6 +166,27 @@ export default function OverPage() {
           </div>
         </section>
 
+        {/* Special Mentions Section */}
+        <section className="bg-white rounded-lg shadow-md p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Speciale vermeldingen
+          </h2>
+          <p className="text-gray-700 leading-relaxed">
+            Deze website maakt gebruik van verschillende bronnen en diensten. We willen graag 
+            de volgende partijen bedanken voor hun bijdrage:
+          </p>
+          <div className="mt-4">
+            <a 
+              href="https://logo.dev" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary-600 hover:text-primary-800 underline font-semibold"
+            >
+              Logos provided by Logo.dev
+            </a>
+          </div>
+        </section>
+
         {/* Contribute Section */}
         <section className="bg-green-50 rounded-lg p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
