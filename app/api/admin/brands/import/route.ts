@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions, hasRole } from '@/lib/auth';
-import { getAllBrandsWithGuideCount, createBrand, getBrandBySlug } from '@/lib/db';
+import { getAllBrandsWithGuideCount, createBrand, getBrandBySlug, createModel, getModelsByBrand } from '@/lib/db';
 
 function createSlug(name: string): string {
   return name
@@ -25,24 +25,46 @@ export async function POST(request: Request) {
     }
 
     const lines = data.trim().split('\n');
-    const brands = new Set<string>();
-    let imported = 0;
+    const brandModelMap = new Map<string, Set<string>>();
+    let importedBrands = 0;
+    let importedModels = 0;
 
+    // Parse the data and group models by brand
     for (const line of lines) {
       const columns = line.split('\t');
-      if (columns.length >= 1) {
+      if (columns.length >= 2) {
         const brandName = columns[0].trim();
-        if (brandName && !brands.has(brandName)) {
-          brands.add(brandName);
-          
-          // Check if brand already exists
-          const slug = createSlug(brandName);
-          const existingBrand = await getBrandBySlug(slug);
-          
-          if (!existingBrand) {
-            await createBrand(brandName, slug);
-            imported++;
+        const modelName = columns[1].trim();
+        
+        if (brandName && modelName) {
+          if (!brandModelMap.has(brandName)) {
+            brandModelMap.set(brandName, new Set());
           }
+          brandModelMap.get(brandName)!.add(modelName);
+        }
+      }
+    }
+
+    // Create brands and models
+    for (const [brandName, modelNames] of Array.from(brandModelMap.entries())) {
+      // Create or get brand
+      const brandSlug = createSlug(brandName);
+      let brand = await getBrandBySlug(brandSlug);
+      
+      if (!brand) {
+        brand = await createBrand(brandName, brandSlug);
+        importedBrands++;
+      }
+
+      // Create models for this brand
+      const existingModels = await getModelsByBrand(brand.id, true);
+      const existingModelNames = new Set(existingModels.map(m => m.name.toLowerCase()));
+
+      for (const modelName of Array.from(modelNames)) {
+        if (!existingModelNames.has(modelName.toLowerCase())) {
+          const modelSlug = createSlug(modelName);
+          await createModel(brand.id, modelName, modelSlug);
+          importedModels++;
         }
       }
     }
@@ -52,11 +74,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      imported,
+      importedBrands,
+      importedModels,
       brands: updatedBrands
     });
   } catch (error) {
-    console.error('Error importing brands:', error);
-    return NextResponse.json({ error: 'Failed to import brands' }, { status: 500 });
+    console.error('Error importing brands and models:', error);
+    return NextResponse.json({ error: 'Failed to import brands and models' }, { status: 500 });
   }
 }

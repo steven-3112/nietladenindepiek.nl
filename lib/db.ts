@@ -233,6 +233,31 @@ export async function getModelsByBrand(brandId: number, includeAll = false) {
   return result.rows;
 }
 
+export async function getModelsByBrandWithGuideCount(brandId: number, includeAll = false): Promise<Model[]> {
+  const result = includeAll
+    ? await sql`
+        SELECT m.*, 
+               COUNT(DISTINCT g.id) as guide_count
+        FROM models m
+        LEFT JOIN guide_models gm ON m.id = gm.model_id
+        LEFT JOIN guides g ON gm.guide_id = g.id AND g.status = 'APPROVED'
+        WHERE m.brand_id = ${brandId}
+        GROUP BY m.id
+        ORDER BY m.name ASC
+      `
+    : await sql`
+        SELECT m.*, 
+               COUNT(DISTINCT g.id) as guide_count
+        FROM models m
+        LEFT JOIN guide_models gm ON m.id = gm.model_id
+        LEFT JOIN guides g ON gm.guide_id = g.id AND g.status = 'APPROVED'
+        WHERE m.brand_id = ${brandId} AND m.status = 'APPROVED'
+        GROUP BY m.id
+        ORDER BY m.name ASC
+      `;
+  return result.rows as Model[];
+}
+
 export async function getModelBySlug(brandSlug: string, modelSlug: string) {
   const result = await sql`
     SELECT m.*, b.name as brand_name, b.slug as brand_slug
@@ -263,8 +288,7 @@ export async function approveModel(id: number) {
 
 export async function updateModel(id: number, name: string, slug: string, yearRange?: string, referenceModelId?: number) {
   const result = await sql`
-    UPDATE models SET name = ${name}, slug = ${slug}, year_range = ${yearRange || null}, 
-           reference_model_id = ${referenceModelId || null}, updated_at = CURRENT_TIMESTAMP
+    UPDATE models SET name = ${name}, slug = ${slug}, year_range = ${yearRange || null}, reference_model_id = ${referenceModelId || null}, updated_at = CURRENT_TIMESTAMP
     WHERE id = ${id}
     RETURNING *
   `;
@@ -272,7 +296,18 @@ export async function updateModel(id: number, name: string, slug: string, yearRa
 }
 
 export async function deleteModel(id: number) {
-  await sql`DELETE FROM models WHERE id = ${id}`;
+  const result = await sql`
+    DELETE FROM models WHERE id = ${id}
+    RETURNING *
+  `;
+  return result.rows[0];
+}
+
+export async function getModelById(id: number) {
+  const result = await sql`
+    SELECT * FROM models WHERE id = ${id}
+  `;
+  return result.rows[0] || null;
 }
 
 // Guide queries
@@ -364,6 +399,19 @@ export interface Brand {
   name: string;
   slug: string;
   logo_url?: string;
+  status: string;
+  guide_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Model {
+  id: number;
+  brand_id: number;
+  name: string;
+  slug: string;
+  year_range?: string;
+  reference_model_id?: number;
   status: string;
   guide_count: number;
   created_at: string;
