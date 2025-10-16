@@ -9,7 +9,9 @@ export default withAuth(
     // Admin routes protection with role checks
     if (path.startsWith('/admin')) {
       if (!token) {
-        return NextResponse.redirect(new URL('/login', req.url));
+        const loginUrl = new URL('/login', req.url);
+        loginUrl.searchParams.set('callbackUrl', req.nextUrl.pathname);
+        return NextResponse.redirect(loginUrl);
       }
 
       const roles = token.roles as string[] || [];

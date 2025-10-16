@@ -1,16 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      const callbackUrl = searchParams.get('callbackUrl') || '/admin';
+      router.push(callbackUrl);
+    }
+  }, [status, session, router, searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,15 +36,28 @@ export default function LoginPage() {
 
       if (result?.error) {
         setError('Onjuiste inloggegevens');
-      } else {
-        router.push('/admin');
-        router.refresh();
+      } else if (result?.ok) {
+        // Successful login - redirect to admin or callback URL
+        const callbackUrl = searchParams.get('callbackUrl') || '/admin';
+        window.location.href = callbackUrl; // Use window.location for full page reload
       }
     } catch {
       setError('Er ging iets mis. Probeer het opnieuw.');
     } finally {
       setLoading(false);
     }
+  }
+
+  // Show loading if checking session
+  if (status === 'loading') {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="text-gray-600 mt-2">Laden...</p>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -100,6 +123,21 @@ export default function LoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="text-gray-600 mt-2">Laden...</p>
+        </div>
+      </main>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
 
