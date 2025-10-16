@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface Brand {
   id: number;
@@ -16,23 +17,45 @@ interface Model {
   year_range: string;
 }
 
-// Car brand emoji mapping
-const brandEmojis: Record<string, string> = {
-  'tesla': '⚡',
-  'volkswagen': '🚙',
-  'bmw': '🏁',
-  'nissan': '🔋',
-  'audi': '🔷',
-  'mercedes': '⭐',
-  'volvo': '🔶',
-  'polestar': '⭐',
-  'hyundai': '🌟',
-  'kia': '🎯',
-  'ford': '🦅',
-  'renault': '💎',
-  'peugeot': '🦁',
-  'byd': '🐉',
+// Car brand domain mapping for logo.dev
+const brandDomains: Record<string, string> = {
+  'tesla': 'tesla.com',
+  'volkswagen': 'vw.com',
+  'bmw': 'bmw.com',
+  'nissan': 'nissan.com',
+  'audi': 'audi.com',
+  'mercedes': 'mercedes-benz.com',
+  'volvo': 'volvo.com',
+  'polestar': 'polestar.com',
+  'hyundai': 'hyundai.com',
+  'kia': 'kia.com',
+  'ford': 'ford.com',
+  'renault': 'renault.com',
+  'peugeot': 'peugeot.com',
+  'byd': 'byd.com',
+  'porsche': 'porsche.com',
+  'opel': 'opel.com',
+  'skoda': 'skoda.com',
+  'seat': 'seat.com',
+  'mg': 'mg.com',
+  'citroen': 'citroen.com',
+  'mazda': 'mazda.com',
+  'lexus': 'lexus.com',
+  'jaguar': 'jaguar.com',
+  'mini': 'mini.com',
+  'smart': 'smart.com',
+  'fiat': 'fiat.com',
 };
+
+// Get logo URL from logo.dev
+function getLogoUrl(brandSlug: string): string {
+  const domain = brandDomains[brandSlug.toLowerCase()];
+  if (!domain) {
+    // Try using brand name as domain
+    return `https://img.logo.dev/${brandSlug}.com?token=pk_X-1jRyxNTFWBlov-c0eCyg&size=200`;
+  }
+  return `https://img.logo.dev/${domain}?token=pk_X-1jRyxNTFWBlov-c0eCyg&size=200`;
+}
 
 export function CarSelector() {
   const router = useRouter();
@@ -115,8 +138,15 @@ export function CarSelector() {
                 className="group relative bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-500 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
               >
                 <div className="text-center">
-                  <div className="text-4xl mb-2">
-                    {brandEmojis[brand.slug.toLowerCase()] || '🚗'}
+                  <div className="relative w-16 h-16 mx-auto mb-3">
+                    <Image
+                      src={getLogoUrl(brand.slug)}
+                      alt={`${brand.name} logo`}
+                      fill
+                      className="object-contain"
+                      sizes="64px"
+                      unoptimized
+                    />
                   </div>
                   <h4 className="font-semibold text-gray-900 group-hover:text-primary-700 transition-colors">
                     {brand.name}
