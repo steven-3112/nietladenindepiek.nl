@@ -23,6 +23,7 @@ export async function initDatabase() {
         name VARCHAR(255) NOT NULL,
         slug VARCHAR(255) UNIQUE NOT NULL,
         logo_url TEXT,
+        status VARCHAR(50) DEFAULT 'APPROVED',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -37,6 +38,7 @@ export async function initDatabase() {
         year_range VARCHAR(50),
         slug VARCHAR(255) NOT NULL,
         reference_model_id INTEGER REFERENCES models(id) ON DELETE SET NULL,
+        status VARCHAR(50) DEFAULT 'APPROVED',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(brand_id, slug)
@@ -130,10 +132,10 @@ export async function updateUserRoles(userId: number, roles: string[]) {
 }
 
 // Brand queries
-export async function getAllBrands() {
-  const result = await sql`
-    SELECT * FROM brands ORDER BY name ASC
-  `;
+export async function getAllBrands(includeAll = false) {
+  const result = includeAll
+    ? await sql`SELECT * FROM brands ORDER BY name ASC`
+    : await sql`SELECT * FROM brands WHERE status = 'APPROVED' ORDER BY name ASC`;
   return result.rows;
 }
 
@@ -144,10 +146,19 @@ export async function getBrandBySlug(slug: string) {
   return result.rows[0] || null;
 }
 
-export async function createBrand(name: string, slug: string, logoUrl?: string) {
+export async function createBrand(name: string, slug: string, logoUrl?: string, status: string = 'APPROVED') {
   const result = await sql`
-    INSERT INTO brands (name, slug, logo_url)
-    VALUES (${name}, ${slug}, ${logoUrl || null})
+    INSERT INTO brands (name, slug, logo_url, status)
+    VALUES (${name}, ${slug}, ${logoUrl || null}, ${status})
+    RETURNING *
+  `;
+  return result.rows[0];
+}
+
+export async function approveBrand(id: number) {
+  const result = await sql`
+    UPDATE brands SET status = 'APPROVED', updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${id}
     RETURNING *
   `;
   return result.rows[0];
@@ -167,10 +178,10 @@ export async function deleteBrand(id: number) {
 }
 
 // Model queries
-export async function getModelsByBrand(brandId: number) {
-  const result = await sql`
-    SELECT * FROM models WHERE brand_id = ${brandId} ORDER BY name ASC
-  `;
+export async function getModelsByBrand(brandId: number, includeAll = false) {
+  const result = includeAll
+    ? await sql`SELECT * FROM models WHERE brand_id = ${brandId} ORDER BY name ASC`
+    : await sql`SELECT * FROM models WHERE brand_id = ${brandId} AND status = 'APPROVED' ORDER BY name ASC`;
   return result.rows;
 }
 
@@ -184,10 +195,19 @@ export async function getModelBySlug(brandSlug: string, modelSlug: string) {
   return result.rows[0] || null;
 }
 
-export async function createModel(brandId: number, name: string, slug: string, yearRange?: string, referenceModelId?: number) {
+export async function createModel(brandId: number, name: string, slug: string, yearRange?: string, referenceModelId?: number, status: string = 'APPROVED') {
   const result = await sql`
-    INSERT INTO models (brand_id, name, slug, year_range, reference_model_id)
-    VALUES (${brandId}, ${name}, ${slug}, ${yearRange || null}, ${referenceModelId || null})
+    INSERT INTO models (brand_id, name, slug, year_range, reference_model_id, status)
+    VALUES (${brandId}, ${name}, ${slug}, ${yearRange || null}, ${referenceModelId || null}, ${status})
+    RETURNING *
+  `;
+  return result.rows[0];
+}
+
+export async function approveModel(id: number) {
+  const result = await sql`
+    UPDATE models SET status = 'APPROVED', updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${id}
     RETURNING *
   `;
   return result.rows[0];
@@ -242,7 +262,7 @@ export async function getGuideWithSteps(guideId: number) {
   `;
 
   const models = await sql`
-    SELECT m.*, b.name as brand_name, b.slug as brand_slug
+    SELECT m.*, b.name as brand_name, b.slug as brand_slug, b.status as brand_status
     FROM models m
     JOIN brands b ON m.brand_id = b.id
     JOIN guide_models gm ON m.id = gm.model_id

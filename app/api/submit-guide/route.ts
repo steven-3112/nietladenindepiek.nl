@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
-import { createGuide, getAllUsers } from '@/lib/db';
+import { createGuide, getAllUsers, createBrand, createModel, getBrandBySlug } from '@/lib/db';
 import { sendNewSubmissionEmail } from '@/lib/email';
+
+function createSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 async function verifyRecaptcha(token: string): Promise<boolean> {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -29,10 +36,14 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
 
 export async function POST(request: Request) {
   try {
-    const { submitterName, submitterEmail, modelIds, steps, recaptchaToken } = await request.json();
+    const { submitterName, submitterEmail, modelIds, steps, recaptchaToken, newBrand, newModel } = await request.json();
 
-    if (!submitterName || !modelIds || modelIds.length === 0 || !steps || steps.length === 0) {
+    if (!submitterName || !steps || steps.length === 0) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+    }
+
+    if (!newModel && (!modelIds || modelIds.length === 0)) {
+      return NextResponse.json({ error: 'At least one model must be selected or created' }, { status: 400 });
     }
 
     // Verify reCAPTCHA
@@ -43,8 +54,44 @@ export async function POST(request: Request) {
       }
     }
 
+    let finalModelIds = modelIds || [];
+
+    // Handle new brand creation
+    let brandId: number | null = null;
+    if (newBrand && newBrand.name) {
+      const brandSlug = createSlug(newBrand.name);
+      // Check if brand already exists
+      const existingBrand = await getBrandBySlug(brandSlug);
+      if (existingBrand) {
+        brandId = existingBrand.id;
+      } else {
+        // Create pending brand
+        const createdBrand = await createBrand(newBrand.name, brandSlug, undefined, 'PENDING');
+        brandId = createdBrand.id;
+      }
+    }
+
+    // Handle new model creation
+    if (newModel && newModel.name && brandId) {
+      const modelSlug = createSlug(newModel.name);
+      // Create pending model
+      const createdModel = await createModel(
+        brandId,
+        newModel.name,
+        modelSlug,
+        newModel.yearRange || undefined,
+        undefined,
+        'PENDING'
+      );
+      finalModelIds = [createdModel.id];
+    }
+
+    if (finalModelIds.length === 0) {
+      return NextResponse.json({ error: 'No models specified for guide' }, { status: 400 });
+    }
+
     // Create the guide
-    const guide = await createGuide(submitterName, submitterEmail, modelIds, steps);
+    const guide = await createGuide(submitterName, submitterEmail, finalModelIds, steps);
 
     // Send email to moderators
     const users = await getAllUsers();

@@ -34,6 +34,11 @@ function IndienenForm() {
   const [selectedModels, setSelectedModels] = useState<number[]>([]);
   const [submitterName, setSubmitterName] = useState('');
   const [submitterEmail, setSubmitterEmail] = useState('');
+  const [isAddingNewBrand, setIsAddingNewBrand] = useState(false);
+  const [newBrandName, setNewBrandName] = useState('');
+  const [isAddingNewModel, setIsAddingNewModel] = useState(false);
+  const [newModelName, setNewModelName] = useState('');
+  const [newModelYearRange, setNewModelYearRange] = useState('');
   const [steps, setSteps] = useState<Step[]>([
     { stepNumber: 1, description: '', imageFile: null, imagePreview: null },
   ]);
@@ -123,8 +128,18 @@ function IndienenForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     
-    if (selectedModels.length === 0) {
-      alert('Selecteer minimaal één model');
+    if (!isAddingNewModel && selectedModels.length === 0) {
+      alert('Selecteer minimaal één model of voeg een nieuw model toe');
+      return;
+    }
+
+    if (isAddingNewBrand && !newBrandName.trim()) {
+      alert('Vul een merknaam in');
+      return;
+    }
+
+    if (isAddingNewModel && !newModelName.trim()) {
+      alert('Vul een modelnaam in');
       return;
     }
 
@@ -181,6 +196,12 @@ function IndienenForm() {
           modelIds: selectedModels,
           steps: stepsData,
           recaptchaToken,
+          // New brand/model data if adding new ones
+          newBrand: isAddingNewBrand ? { name: newBrandName } : null,
+          newModel: isAddingNewModel ? { 
+            name: newModelName, 
+            yearRange: newModelYearRange || null 
+          } : null,
         }),
       });
 
@@ -294,41 +315,126 @@ function IndienenForm() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Merk *
                 </label>
-                <select
-                  value={selectedBrand}
-                  onChange={(e) => setSelectedBrand(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                >
-                  <option value="">-- Selecteer een merk --</option>
-                  {brands.map((brand) => (
-                    <option key={brand.id} value={brand.slug}>
-                      {brand.name}
-                    </option>
-                  ))}
-                </select>
+                {!isAddingNewBrand ? (
+                  <>
+                    <select
+                      value={selectedBrand}
+                      onChange={(e) => setSelectedBrand(e.target.value)}
+                      required={!isAddingNewBrand}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    >
+                      <option value="">-- Selecteer een merk --</option>
+                      {brands.map((brand) => (
+                        <option key={brand.id} value={brand.slug}>
+                          {brand.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setIsAddingNewBrand(true)}
+                      className="mt-2 text-sm text-primary-600 hover:text-primary-800"
+                    >
+                      + Mijn merk staat er niet bij
+                    </button>
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={newBrandName}
+                      onChange={(e) => setNewBrandName(e.target.value)}
+                      required
+                      placeholder="Bijvoorbeeld: BYD"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingNewBrand(false);
+                        setNewBrandName('');
+                      }}
+                      className="text-sm text-gray-600 hover:text-gray-800"
+                    >
+                      ← Kies uit bestaande merken
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {selectedBrand && models.length > 0 && (
+              {(selectedBrand || isAddingNewBrand) && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Modellen (meerdere mogelijk) *
                   </label>
-                  <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-4">
-                    {models.map((model) => (
-                      <label key={model.id} className="flex items-center gap-2 cursor-pointer">
+                  
+                  {!isAddingNewModel ? (
+                    <>
+                      {selectedBrand && models.length > 0 && (
+                        <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-4 mb-2">
+                          {models.map((model) => (
+                            <label key={model.id} className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={selectedModels.includes(model.id)}
+                                onChange={() => handleModelToggle(model.id)}
+                                className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                              />
+                              <span className="text-gray-800">
+                                {model.name} {model.year_range && `(${model.year_range})`}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingNewModel(true)}
+                        className="mt-2 text-sm text-primary-600 hover:text-primary-800"
+                      >
+                        + Mijn model staat er niet bij
+                      </button>
+                    </>
+                  ) : (
+                    <div className="space-y-3 border border-gray-300 rounded-lg p-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Model naam *
+                        </label>
                         <input
-                          type="checkbox"
-                          checked={selectedModels.includes(model.id)}
-                          onChange={() => handleModelToggle(model.id)}
-                          className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                          type="text"
+                          value={newModelName}
+                          onChange={(e) => setNewModelName(e.target.value)}
+                          required={isAddingNewModel}
+                          placeholder="Bijvoorbeeld: Atto 3"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
-                        <span className="text-gray-800">
-                          {model.name} {model.year_range && `(${model.year_range})`}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Bouwjaren (optioneel)
+                        </label>
+                        <input
+                          type="text"
+                          value={newModelYearRange}
+                          onChange={(e) => setNewModelYearRange(e.target.value)}
+                          placeholder="Bijvoorbeeld: 2022-heden"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsAddingNewModel(false);
+                          setNewModelName('');
+                          setNewModelYearRange('');
+                        }}
+                        className="text-sm text-gray-600 hover:text-gray-800"
+                      >
+                        ← Kies uit bestaande modellen
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
