@@ -31,9 +31,9 @@ export default function OverPage() {
               Het verhaal achter Niet Laden in de Piek
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Deze website is een initiatief van <strong>Steven Heijtel</strong>, die zijn 
-              steentje wilde bijdragen aan de energietransitie. Als eigenaar van een elektrische 
-              auto merkte Steven dat veel mensen niet weten hoe ze hun auto zo kunnen instellen 
+              Hoi! Ik ben <strong>Steven Heijtel</strong> en ik heb deze website gemaakt om mijn 
+              steentje bij te dragen aan de energietransitie. Als eigenaar van een elektrische 
+              auto merkte ik dat veel mensen niet weten hoe ze hun auto zo kunnen instellen 
               dat deze niet laadt tijdens piekuren (16:00-21:00 uur).
             </p>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -42,8 +42,8 @@ export default function OverPage() {
               kunnen we met z'n allen het net ontlasten en de energietransitie versnellen.
             </p>
             <p className="text-gray-700 leading-relaxed">
-              Omdat niet iedereen weet hoe dit in te stellen op hun specifieke auto, is deze 
-              website ontstaan. Door de kracht van de community kunnen we samen een complete 
+              Omdat niet iedereen weet hoe dit in te stellen op hun specifieke auto, besloot ik 
+              deze website te maken. Door de kracht van de community kunnen we samen een complete 
               database opbouwen met handleidingen voor alle elektrische auto's.
             </p>
           </div>
