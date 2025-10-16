@@ -78,9 +78,17 @@ export default async function Home() {
       {/* Footer */}
       <footer className="bg-gray-50 border-t border-gray-200 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <p className="text-center text-gray-600 text-sm">
-            Samen werken we aan een duurzame toekomst 🌱
-          </p>
+          <div className="text-center">
+            <p className="text-gray-600 text-sm mb-2">
+              Samen werken we aan een duurzame toekomst 🌱
+            </p>
+            <Link
+              href="/over"
+              className="text-primary-600 hover:text-primary-800 text-sm font-medium"
+            >
+              Over dit initiatief
+            </Link>
+          </div>
         </div>
       </footer>
     </main>
