@@ -1,6 +1,10 @@
 import bcrypt from 'bcryptjs';
 import { initDatabase, createUser, createBrand, createModel } from './db';
 
+// Load environment variables from .env.local
+import { config } from 'dotenv';
+config({ path: '.env.local' });
+
 async function seed() {
   console.log('Starting database seed...');
 
