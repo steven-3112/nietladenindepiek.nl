@@ -14,12 +14,14 @@ export default async function Home() {
             <h1 className="text-2xl font-bold text-primary-700">
               Niet Laden in de Piek
             </h1>
-            <Link
-              href={session ? "/admin" : "/login"}
-              className="text-sm text-primary-600 hover:text-primary-800"
-            >
-              {session ? "Admin Dashboard" : "Admin"}
-            </Link>
+            {session && (
+              <Link
+                href="/admin"
+                className="text-sm text-primary-600 hover:text-primary-800"
+              >
+                Admin Dashboard
+              </Link>
+            )}
           </div>
         </div>
       </header>
