@@ -8,6 +8,7 @@ interface Brand {
   id: number;
   name: string;
   slug: string;
+  guide_count: number;
 }
 
 interface Model {
@@ -131,35 +132,85 @@ export function CarSelector() {
       {!selectedBrand ? (
         /* Brand Grid */
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">
             Kies het merk van je auto
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {brands.map((brand) => (
-              <button
-                key={brand.id}
-                onClick={() => handleBrandClick(brand)}
-                className="group relative bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-500 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
-              >
-                <div className="text-center">
-                  <div className="relative w-16 h-16 mx-auto mb-3">
-                    <Image
-                      src={getLogoUrl(brand.slug)}
-                      alt={`${brand.name} logo`}
-                      fill
-                      className="object-contain"
-                      sizes="64px"
-                      unoptimized
-                    />
+          
+          {/* Brands with guides */}
+          <div className="mb-8">
+            <h4 className="text-md font-semibold text-green-700 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              Merken met handleidingen ({brands.filter(b => b.guide_count > 0).length})
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {brands.filter(brand => brand.guide_count > 0).map((brand) => (
+                <button
+                  key={brand.id}
+                  onClick={() => handleBrandClick(brand)}
+                  className="group relative bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-500 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
+                >
+                  <div className="text-center">
+                    <div className="relative w-16 h-16 mx-auto mb-3">
+                      <Image
+                        src={getLogoUrl(brand.slug)}
+                        alt={`${brand.name} logo`}
+                        fill
+                        className="object-contain"
+                        sizes="64px"
+                        unoptimized
+                      />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 group-hover:text-primary-700 transition-colors">
+                      {brand.name}
+                    </h4>
+                    <p className="text-xs text-green-600 mt-1">
+                      {brand.guide_count} handleiding{brand.guide_count !== 1 ? 'en' : ''}
+                    </p>
                   </div>
-                  <h4 className="font-semibold text-gray-900 group-hover:text-primary-700 transition-colors">
-                    {brand.name}
-                  </h4>
-                </div>
-                <div className="absolute inset-0 bg-primary-50 opacity-0 group-hover:opacity-10 rounded-xl transition-opacity"></div>
-              </button>
-            ))}
+                  <div className="absolute inset-0 bg-primary-50 opacity-0 group-hover:opacity-10 rounded-xl transition-opacity"></div>
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Brands without guides */}
+          {brands.filter(b => b.guide_count === 0).length > 0 && (
+            <div>
+              <h4 className="text-md font-semibold text-gray-600 mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                Merken zonder handleidingen ({brands.filter(b => b.guide_count === 0).length})
+              </h4>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                {brands.filter(brand => brand.guide_count === 0).map((brand) => (
+                  <button
+                    key={brand.id}
+                    onClick={() => handleBrandClick(brand)}
+                    className="group relative bg-gray-50 border border-gray-200 rounded-lg p-3 hover:border-gray-300 hover:shadow-md transition-all duration-200 hover:-translate-y-1"
+                  >
+                    <div className="text-center">
+                      <div className="relative w-8 h-8 mx-auto mb-2">
+                        <Image
+                          src={getLogoUrl(brand.slug)}
+                          alt={`${brand.name} logo`}
+                          fill
+                          className="object-contain opacity-70"
+                          sizes="32px"
+                          unoptimized
+                        />
+                      </div>
+                      <h4 className="text-xs font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
+                        {brand.name}
+                      </h4>
+                    </div>
+                    <div className="absolute inset-0 bg-gray-100 opacity-0 group-hover:opacity-20 rounded-lg transition-opacity"></div>
+                  </button>
+                ))}
+              </div>
+              <p className="text-sm text-gray-500 mt-3 text-center">
+                Geen handleiding voor jouw merk? <span className="text-primary-600 font-medium">Voeg er een toe!</span>
+              </p>
+            </div>
+          )}
         </div>
       ) : (
         /* Model Grid */

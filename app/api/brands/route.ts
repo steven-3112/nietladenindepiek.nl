@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getAllBrands } from '@/lib/db';
+import { getAllBrandsWithGuideCount } from '@/lib/db';
 
 export async function GET() {
   try {
-    const brands = await getAllBrands();
+    const brands = await getAllBrandsWithGuideCount();
     return NextResponse.json(brands);
   } catch (error) {
     console.error('Error fetching brands:', error);
