@@ -58,6 +58,12 @@ export default async function AdminLayout({
                     Gebruikers
                   </Link>
                 )}
+                <Link
+                  href="/admin/wachtwoord"
+                  className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-primary-600"
+                >
+                  Wachtwoord
+                </Link>
               </div>
             </div>
 

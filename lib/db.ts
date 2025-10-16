@@ -133,6 +133,15 @@ export async function updateUserRoles(userId: number, roles: string[]) {
   return result.rows[0];
 }
 
+export async function updateUserPassword(userId: number, hashedPassword: string) {
+  const result = await sql`
+    UPDATE users SET password = ${hashedPassword}, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${userId}
+    RETURNING *
+  `;
+  return result.rows[0];
+}
+
 // Brand queries
 export async function getAllBrands(includeAll = false) {
   const result = includeAll
