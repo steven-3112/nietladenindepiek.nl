@@ -35,10 +35,10 @@ export default async function AdminPage() {
           >
             <div className="text-4xl mb-4">🚗</div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">
-              Auto's beheren
+              Auto&apos;s beheren
             </h2>
             <p className="text-gray-600">
-              Voeg merken en modellen toe of bewerk bestaande auto's.
+              Voeg merken en modellen toe of bewerk bestaande auto&apos;s.
             </p>
           </Link>
         )}

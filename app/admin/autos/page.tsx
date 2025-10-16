@@ -15,7 +15,7 @@ export default async function AutosPage() {
   return (
     <div className="px-4 sm:px-0">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        Auto's beheren
+        Auto&apos;s beheren
       </h1>
 
       <div className="bg-white rounded-lg shadow-md p-8">

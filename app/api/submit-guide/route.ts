@@ -112,7 +112,7 @@ export async function POST(request: Request) {
 
     if (moderatorEmails.length > 0) {
       const modelNames = modelIds.map((id: number) => `Model ${id}`); // Simplified for now
-      await sendNewSubmissionEmail(moderatorEmails, submitterName, modelNames, guide.id);
+      await sendNewSubmissionEmail(moderatorEmails, submitterName, modelNames);
     }
 
     return NextResponse.json({ success: true, guideId: guide.id });

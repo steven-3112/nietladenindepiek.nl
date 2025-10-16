@@ -5,8 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendNewSubmissionEmail(
   moderatorEmails: string[],
   guideName: string,
-  models: string[],
-  guideId: number
+  models: string[]
 ) {
   try {
     await resend.emails.send({

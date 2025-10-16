@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { getGuideWithSteps } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { FeedbackButtons } from '@/components/FeedbackButtons';
@@ -23,7 +22,6 @@ export default async function GuideDetailPage({ params }: PageProps) {
   const sortedSteps = guide.steps.sort((a, b) => a.step_number - b.step_number);
 
   // Schema.org HowTo structured data for SEO
-  const baseUrl = process.env.NEXTAUTH_URL || 'https://nietladenindepiek.nl';
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',

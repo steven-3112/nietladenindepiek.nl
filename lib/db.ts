@@ -99,9 +99,10 @@ export async function initDatabase() {
 
 // User queries
 export async function createUser(email: string, password: string, name: string, roles: string[] = []) {
+  const rolesArray = `{${roles.join(',')}}`;
   const result = await sql`
     INSERT INTO users (email, password, name, roles)
-    VALUES (${email}, ${password}, ${name}, ${roles})
+    VALUES (${email}, ${password}, ${name}, ${rolesArray}::text[])
     RETURNING *
   `;
   return result.rows[0];
@@ -123,8 +124,9 @@ export async function getAllUsers() {
 }
 
 export async function updateUserRoles(userId: number, roles: string[]) {
+  const rolesArray = `{${roles.join(',')}}`;
   const result = await sql`
-    UPDATE users SET roles = ${roles}, updated_at = CURRENT_TIMESTAMP
+    UPDATE users SET roles = ${rolesArray}::text[], updated_at = CURRENT_TIMESTAMP
     WHERE id = ${userId}
     RETURNING *
   `;
@@ -240,6 +242,33 @@ export async function getGuidesByModel(modelId: number, status: string = 'APPROV
   return result.rows;
 }
 
+export interface GuideWithSteps {
+  id: number;
+  submitted_by_name: string;
+  submitted_by_email: string;
+  status: string;
+  created_at: string;
+  approved_by_user_id?: number;
+  approved_by_name?: string;
+  helpful_count: number;
+  not_helpful_count: number;
+  steps: {
+    id: number;
+    guide_id: number;
+    step_number: number;
+    description: string;
+    image_url?: string;
+  }[];
+  models: {
+    id: number;
+    name: string;
+    brand_name: string;
+    brand_slug: string;
+    brand_status: string;
+    status: string;
+  }[];
+}
+
 export async function getGuideById(guideId: number) {
   const result = await sql`
     SELECT g.*,
@@ -251,7 +280,7 @@ export async function getGuideById(guideId: number) {
   return result.rows[0] || null;
 }
 
-export async function getGuideWithSteps(guideId: number) {
+export async function getGuideWithSteps(guideId: number): Promise<GuideWithSteps | null> {
   const guide = await getGuideById(guideId);
   if (!guide) return null;
 
@@ -273,10 +302,18 @@ export async function getGuideWithSteps(guideId: number) {
     ...guide,
     steps: steps.rows,
     models: models.rows,
-  };
+  } as GuideWithSteps;
 }
 
-export async function getPendingGuides() {
+export interface Guide {
+  id: number;
+  submitted_by_name: string;
+  submitted_by_email: string;
+  model_names: string[];
+  created_at: string;
+}
+
+export async function getPendingGuides(): Promise<Guide[]> {
   const result = await sql`
     SELECT g.*,
            ARRAY_AGG(m.name || ' (' || b.name || ')') as model_names
@@ -288,7 +325,7 @@ export async function getPendingGuides() {
     GROUP BY g.id
     ORDER BY g.created_at DESC
   `;
-  return result.rows;
+  return result.rows as Guide[];
 }
 
 export async function createGuide(

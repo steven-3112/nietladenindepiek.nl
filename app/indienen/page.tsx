@@ -308,7 +308,7 @@ function IndienenForm() {
           {/* Car Selection */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Voor welke auto('s) is deze handleiding?
+              Voor welke auto&apos;s is deze handleiding?
             </h2>
             <div className="space-y-4">
               <div>

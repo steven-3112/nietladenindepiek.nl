@@ -47,7 +47,7 @@ export default async function AdminLayout({
                     href="/admin/autos"
                     className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-primary-600"
                   >
-                    Auto's
+                    Auto&apos;s
                   </Link>
                 )}
                 {hasUserAdmin && (

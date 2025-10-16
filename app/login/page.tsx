@@ -30,7 +30,7 @@ export default function LoginPage() {
         router.push('/admin');
         router.refresh();
       }
-    } catch (error) {
+    } catch {
       setError('Er ging iets mis. Probeer het opnieuw.');
     } finally {
       setLoading(false);

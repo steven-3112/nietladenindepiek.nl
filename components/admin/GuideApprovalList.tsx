@@ -2,13 +2,25 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { Guide } from '@/lib/db';
 
-interface Guide {
+interface GuideModel {
   id: number;
-  submitted_by_name: string;
-  submitted_by_email: string;
-  model_names: string[];
-  created_at: string;
+  name: string;
+  brand_name: string;
+  status: string;
+}
+
+interface GuideStep {
+  id: number;
+  step_number: number;
+  description: string;
+  image_url?: string;
+}
+
+interface GuideDetails {
+  models: GuideModel[];
+  steps: GuideStep[];
 }
 
 interface GuideApprovalListProps {
@@ -18,8 +30,7 @@ interface GuideApprovalListProps {
 export function GuideApprovalList({ initialGuides }: GuideApprovalListProps) {
   const [guides, setGuides] = useState(initialGuides);
   const [expandedGuide, setExpandedGuide] = useState<number | null>(null);
-  const [guideDetails, setGuideDetails] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [guideDetails, setGuideDetails] = useState<GuideDetails | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectModal, setShowRejectModal] = useState<number | null>(null);
 
@@ -30,7 +41,6 @@ export function GuideApprovalList({ initialGuides }: GuideApprovalListProps) {
       return;
     }
 
-    setLoading(true);
     try {
       const response = await fetch(`/api/guides/${guideId}/details`);
       const data = await response.json();
@@ -38,8 +48,6 @@ export function GuideApprovalList({ initialGuides }: GuideApprovalListProps) {
       setExpandedGuide(guideId);
     } catch (error) {
       console.error('Error loading guide details:', error);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -118,7 +126,7 @@ export function GuideApprovalList({ initialGuides }: GuideApprovalListProps) {
               {expandedGuide === guide.id && guideDetails && (
                 <div className="mt-6 border-t pt-6">
                   {/* Show new models/brands warning */}
-                  {guideDetails.models && guideDetails.models.some((m: any) => m.status === 'PENDING') && (
+                  {guideDetails.models && guideDetails.models.some((m) => m.status === 'PENDING') && (
                     <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
@@ -132,7 +140,7 @@ export function GuideApprovalList({ initialGuides }: GuideApprovalListProps) {
                             Bij goedkeuring worden deze automatisch toegevoegd.
                           </p>
                           <ul className="mt-2 text-sm text-yellow-600 list-disc list-inside">
-                            {guideDetails.models.filter((m: any) => m.status === 'PENDING').map((m: any) => (
+                            {guideDetails.models.filter((m) => m.status === 'PENDING').map((m) => (
                               <li key={m.id}>
                                 Nieuw: {m.brand_name} {m.name}
                               </li>
@@ -146,8 +154,8 @@ export function GuideApprovalList({ initialGuides }: GuideApprovalListProps) {
                   <h4 className="font-bold text-gray-900 mb-4">Stappen:</h4>
                   <div className="space-y-6">
                     {guideDetails.steps
-                      .sort((a: any, b: any) => a.step_number - b.step_number)
-                      .map((step: any) => (
+                      .sort((a, b) => a.step_number - b.step_number)
+                      .map((step) => (
                         <div key={step.id} className="flex items-start gap-4">
                           <div className="flex-shrink-0 w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
                             {step.step_number}

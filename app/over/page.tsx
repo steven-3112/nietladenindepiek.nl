@@ -39,12 +39,12 @@ export default function OverPage() {
             <p className="text-gray-700 leading-relaxed mb-4">
               Het laden tijdens piekuren legt extra druk op het energienet, juist op het moment 
               dat iedereen thuiskomt, kookt en verwarmt. Door slim te laden buiten deze tijden, 
-              kunnen we met z'n allen het net ontlasten en de energietransitie versnellen.
+              kunnen we met z&apos;n allen het net ontlasten en de energietransitie versnellen.
             </p>
             <p className="text-gray-700 leading-relaxed">
-              Omdat niet iedereen weet hoe dit in te stellen op hun specifieke auto, besloot ik 
-              deze website te maken. Door de kracht van de community kunnen we samen een complete 
-              database opbouwen met handleidingen voor alle elektrische auto's.
+              Omdat niet iedereen weet hoe dit in te stellen op hun specifieke auto, heb ik deze 
+              website gemaakt. Door de kracht van de community kunnen we samen een complete en 
+              betrouwbare database opbouwen met handleidingen voor alle elektrische auto&apos;s.
             </p>
           </div>
 
