@@ -2,12 +2,45 @@ import { NextResponse } from 'next/server';
 import { createGuide, getAllUsers } from '@/lib/db';
 import { sendNewSubmissionEmail } from '@/lib/email';
 
+async function verifyRecaptcha(token: string): Promise<boolean> {
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+  
+  if (!secretKey) {
+    console.warn('reCAPTCHA secret key not configured, skipping verification');
+    return true; // Skip verification if not configured
+  }
+
+  try {
+    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${secretKey}&response=${token}`,
+    });
+
+    const data = await response.json();
+    
+    // Check if score is above threshold (0.5 is common for v3)
+    return data.success && data.score >= 0.5;
+  } catch (error) {
+    console.error('reCAPTCHA verification error:', error);
+    return false;
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    const { submitterName, submitterEmail, modelIds, steps } = await request.json();
+    const { submitterName, submitterEmail, modelIds, steps, recaptchaToken } = await request.json();
 
     if (!submitterName || !modelIds || modelIds.length === 0 || !steps || steps.length === 0) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+    }
+
+    // Verify reCAPTCHA
+    if (recaptchaToken) {
+      const isValid = await verifyRecaptcha(recaptchaToken);
+      if (!isValid) {
+        return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 });
+      }
     }
 
     // Create the guide

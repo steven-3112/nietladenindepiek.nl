@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { ReCaptchaProvider } from '@/components/ReCaptchaProvider';
 
 interface Brand {
   id: number;
@@ -24,7 +26,8 @@ interface Step {
   imagePreview: string | null;
 }
 
-export default function IndienenPage() {
+function IndienenForm() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [brands, setBrands] = useState<Brand[]>([]);
   const [models, setModels] = useState<Model[]>([]);
   const [selectedBrand, setSelectedBrand] = useState('');
@@ -130,9 +133,16 @@ export default function IndienenPage() {
       return;
     }
 
+    // Get reCAPTCHA token
+    if (!executeRecaptcha) {
+      alert('reCAPTCHA nog niet geladen, probeer het opnieuw');
+      return;
+    }
+
     setLoading(true);
 
     try {
+      const recaptchaToken = await executeRecaptcha('submit_guide');
       // Upload images to Cloudinary and prepare data
       const stepsData = await Promise.all(
         steps.map(async (step) => {
@@ -170,6 +180,7 @@ export default function IndienenPage() {
           submitterEmail: submitterEmail || null,
           modelIds: selectedModels,
           steps: stepsData,
+          recaptchaToken,
         }),
       });
 
@@ -414,6 +425,15 @@ export default function IndienenPage() {
         </form>
       </section>
     </main>
+  );
+}
+
+// Wrap form with ReCaptcha provider
+export default function IndienenPage() {
+  return (
+    <ReCaptchaProvider>
+      <IndienenForm />
+    </ReCaptchaProvider>
   );
 }
 

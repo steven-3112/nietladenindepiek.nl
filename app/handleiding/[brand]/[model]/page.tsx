@@ -19,10 +19,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://nietladenindepiek.nl';
+  const canonicalUrl = `${baseUrl}/handleiding/${params.brand}/${params.model}`;
+
   return {
     title: `${model.brand_name} ${model.name} laadtijden instellen | Niet Laden in de Piek`,
     description: `Leer hoe je jouw ${model.brand_name} ${model.name} zo instelt dat deze niet laadt tijdens piekuren (16:00-21:00). Handleidingen van gebruikers.`,
     keywords: `${model.brand_name}, ${model.name}, elektrische auto, laadtijden, piekuren, energienet`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${model.brand_name} ${model.name} laadtijden instellen`,
+      description: `Handleidingen voor het instellen van laadtijden op je ${model.brand_name} ${model.name}`,
+      url: canonicalUrl,
+      siteName: 'Niet Laden in de Piek',
+      locale: 'nl_NL',
+      type: 'website',
+    },
   };
 }
 

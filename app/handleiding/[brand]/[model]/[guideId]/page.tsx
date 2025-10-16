@@ -22,8 +22,32 @@ export default async function GuideDetailPage({ params }: PageProps) {
 
   const sortedSteps = guide.steps.sort((a, b) => a.step_number - b.step_number);
 
+  // Schema.org HowTo structured data for SEO
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://nietladenindepiek.nl';
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: `Laadtijden instellen op ${guide.models[0]?.brand_name} ${guide.models[0]?.name}`,
+    description: `Stap-voor-stap handleiding om je ${guide.models[0]?.brand_name} ${guide.models[0]?.name} zo in te stellen dat deze niet laadt tussen 16:00 en 21:00 uur.`,
+    image: sortedSteps.find(s => s.image_url)?.image_url || '',
+    step: sortedSteps.map((step) => ({
+      '@type': 'HowToStep',
+      name: `Stap ${step.step_number}`,
+      text: step.description,
+      image: step.image_url || undefined,
+      position: step.step_number,
+    })),
+  };
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
+    <>
+      {/* Schema.org structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      />
+      
+      <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link
@@ -102,6 +126,7 @@ export default async function GuideDetailPage({ params }: PageProps) {
         <FeedbackButtons guideId={guide.id} />
       </section>
     </main>
+    </>
   );
 }
 
