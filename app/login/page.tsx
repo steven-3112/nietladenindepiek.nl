@@ -39,7 +39,19 @@ function LoginForm() {
       } else if (result?.ok) {
         // Successful login - redirect to admin or callback URL
         const callbackUrl = searchParams.get('callbackUrl') || '/admin';
-        window.location.href = callbackUrl; // Use window.location for full page reload
+        
+        // Try multiple redirect methods for better compatibility
+        try {
+          // First try router.push
+          await router.push(callbackUrl);
+          // Then force a page reload as backup
+          setTimeout(() => {
+            window.location.href = callbackUrl;
+          }, 100);
+        } catch {
+          // Fallback to direct navigation
+          window.location.href = callbackUrl;
+        }
       }
     } catch {
       setError('Er ging iets mis. Probeer het opnieuw.');
