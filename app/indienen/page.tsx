@@ -347,16 +347,20 @@ export default function IndienenPage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Uitleg *
+                        Uitleg * (max 400 tekens)
                       </label>
                       <textarea
                         value={step.description}
                         onChange={(e) => handleStepDescriptionChange(index, e.target.value)}
                         required
+                        maxLength={400}
                         rows={3}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         placeholder="Bijvoorbeeld: Open de app en ga naar instellingen..."
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {step.description.length}/400 tekens
+                      </p>
                     </div>
                     
                     <div>

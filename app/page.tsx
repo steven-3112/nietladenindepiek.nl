@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { CarSelector } from '@/components/CarSelector';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions);
   return (
     <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
       {/* Header */}
@@ -12,10 +15,10 @@ export default function Home() {
               Niet Laden in de Piek
             </h1>
             <Link
-              href="/login"
+              href={session ? "/admin" : "/login"}
               className="text-sm text-primary-600 hover:text-primary-800"
             >
-              Admin
+              {session ? "Admin Dashboard" : "Admin"}
             </Link>
           </div>
         </div>

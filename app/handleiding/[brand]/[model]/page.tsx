@@ -1,11 +1,28 @@
 import Link from 'next/link';
 import { getModelBySlug, getGuidesByModel } from '@/lib/db';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
 interface PageProps {
   params: {
     brand: string;
     model: string;
+  };
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const model = await getModelBySlug(params.brand, params.model);
+  
+  if (!model) {
+    return {
+      title: 'Model niet gevonden',
+    };
+  }
+
+  return {
+    title: `${model.brand_name} ${model.name} laadtijden instellen | Niet Laden in de Piek`,
+    description: `Leer hoe je jouw ${model.brand_name} ${model.name} zo instelt dat deze niet laadt tijdens piekuren (16:00-21:00). Handleidingen van gebruikers.`,
+    keywords: `${model.brand_name}, ${model.name}, elektrische auto, laadtijden, piekuren, energienet`,
   };
 }
 
@@ -31,11 +48,14 @@ export default async function HandleidingPage({ params }: PageProps) {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {model.brand_name} {model.name}
+            Laadtijden instellen voor {model.brand_name} {model.name}
           </h1>
           {model.year_range && (
-            <p className="text-gray-600">Model: {model.year_range}</p>
+            <p className="text-gray-600">Bouwjaren: {model.year_range}</p>
           )}
+          <p className="text-gray-600 mt-2">
+            Leer hoe je jouw {model.brand_name} {model.name} zo instelt dat deze niet laadt tijdens piekuren (16:00-21:00)
+          </p>
         </div>
 
         {guides.length === 0 ? (

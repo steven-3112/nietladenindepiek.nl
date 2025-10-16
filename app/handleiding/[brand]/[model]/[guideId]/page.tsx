@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { getGuideWithSteps } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { FeedbackButtons } from '@/components/FeedbackButtons';
+import { ImageModal } from '@/components/ImageModal';
 
 interface PageProps {
   params: {
@@ -75,15 +76,10 @@ export default async function GuideDetailPage({ params }: PageProps) {
                     {step.description}
                   </p>
                   {step.image_url && (
-                    <div className="relative w-full max-w-md h-64 rounded-lg overflow-hidden">
-                      <Image
-                        src={step.image_url}
-                        alt={`Stap ${step.step_number}`}
-                        fill
-                        className="object-contain"
-                        sizes="(max-width: 768px) 100vw, 448px"
-                      />
-                    </div>
+                    <ImageModal
+                      src={step.image_url}
+                      alt={`Stap ${step.step_number}`}
+                    />
                   )}
                 </div>
               </div>

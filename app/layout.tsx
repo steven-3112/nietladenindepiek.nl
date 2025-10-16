@@ -5,8 +5,15 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Niet Laden in de Piek - Help het energienet",
-  description: "Ontdek hoe je jouw elektrische auto zo instelt dat deze niet laadt tussen 16:00 en 21:00 uur. Goed voor het energienet en de energietransitie.",
+  title: "Niet Laden in de Piek - Laadtijden instellen elektrische auto",
+  description: "Ontdek hoe je jouw elektrische auto zo instelt dat deze niet laadt tijdens piekuren (16:00-21:00). Handleidingen voor Tesla, VW, BMW en meer. Goed voor het energienet en de energietransitie.",
+  keywords: "elektrische auto, laadtijden, piekuren, energienet, energietransitie, Tesla, Volkswagen, BMW, EV laden",
+  openGraph: {
+    title: "Niet Laden in de Piek - Help het energienet",
+    description: "Leer hoe je jouw elektrische auto slim laadt buiten piekuren",
+    type: "website",
+    locale: "nl_NL",
+  },
 };
 
 export default function RootLayout({
