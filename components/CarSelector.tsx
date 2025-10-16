@@ -49,12 +49,16 @@ const brandDomains: Record<string, string> = {
 
 // Get logo URL from logo.dev
 function getLogoUrl(brandSlug: string): string {
+  const token = process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN;
   const domain = brandDomains[brandSlug.toLowerCase()];
-  if (!domain) {
-    // Try using brand name as domain
-    return `https://img.logo.dev/${brandSlug}.com?token=pk_X-1jRyxNTFWBlov-c0eCyg&size=200`;
-  }
-  return `https://img.logo.dev/${domain}?token=pk_X-1jRyxNTFWBlov-c0eCyg&size=200`;
+  const targetDomain = domain || `${brandSlug}.com`;
+  
+  // Logo.dev doesn't require a token for basic usage, but adds one if available
+  const url = token 
+    ? `https://img.logo.dev/${targetDomain}?token=${token}&size=200`
+    : `https://img.logo.dev/${targetDomain}?size=200`;
+  
+  return url;
 }
 
 export function CarSelector() {
