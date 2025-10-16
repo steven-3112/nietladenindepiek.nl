@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createGuide, getAllUsers, createBrand, createModel, getBrandBySlug } from '@/lib/db';
 import { sendNewSubmissionEmail } from '@/lib/email';
+import { sql } from '@vercel/postgres';
 
 function createSlug(name: string): string {
   return name
@@ -56,18 +57,27 @@ export async function POST(request: Request) {
 
     let finalModelIds = modelIds || [];
 
-    // Handle new brand creation
+    // Determine brand ID for new model
     let brandId: number | null = null;
+    
     if (newBrand && newBrand.name) {
+      // Creating new brand
       const brandSlug = createSlug(newBrand.name);
-      // Check if brand already exists
       const existingBrand = await getBrandBySlug(brandSlug);
       if (existingBrand) {
         brandId = existingBrand.id;
       } else {
-        // Create pending brand
         const createdBrand = await createBrand(newBrand.name, brandSlug, undefined, 'PENDING');
         brandId = createdBrand.id;
+      }
+    } else if (newModel && finalModelIds.length > 0) {
+      // Using existing brand from selected models
+      // Get brand_id from one of the selected models
+      const modelData = await sql`
+        SELECT brand_id FROM models WHERE id = ${finalModelIds[0]}
+      `;
+      if (modelData.rows.length > 0) {
+        brandId = modelData.rows[0].brand_id;
       }
     }
 
@@ -83,7 +93,8 @@ export async function POST(request: Request) {
         undefined,
         'PENDING'
       );
-      finalModelIds = [createdModel.id];
+      // Add new model to existing selected models
+      finalModelIds = [...finalModelIds, createdModel.id];
     }
 
     if (finalModelIds.length === 0) {

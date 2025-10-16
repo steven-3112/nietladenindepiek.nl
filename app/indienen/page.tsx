@@ -368,35 +368,31 @@ function IndienenForm() {
                     Modellen (meerdere mogelijk) *
                   </label>
                   
-                  {!isAddingNewModel ? (
-                    <>
-                      {selectedBrand && models.length > 0 && (
-                        <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-4 mb-2">
-                          {models.map((model) => (
-                            <label key={model.id} className="flex items-center gap-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={selectedModels.includes(model.id)}
-                                onChange={() => handleModelToggle(model.id)}
-                                className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                              />
-                              <span className="text-gray-800">
-                                {model.name} {model.year_range && `(${model.year_range})`}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => setIsAddingNewModel(true)}
-                        className="mt-2 text-sm text-primary-600 hover:text-primary-800"
-                      >
-                        + Mijn model staat er niet bij
-                      </button>
-                    </>
-                  ) : (
-                    <div className="space-y-3 border border-gray-300 rounded-lg p-4">
+                  {/* Existing models selection */}
+                  {selectedBrand && models.length > 0 && (
+                    <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-4 mb-3">
+                      {models.map((model) => (
+                        <label key={model.id} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedModels.includes(model.id)}
+                            onChange={() => handleModelToggle(model.id)}
+                            className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                          />
+                          <span className="text-gray-800">
+                            {model.name} {model.year_range && `(${model.year_range})`}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* New model input - can be shown alongside existing models */}
+                  {isAddingNewModel ? (
+                    <div className="space-y-3 border border-gray-300 rounded-lg p-4 bg-green-50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-green-700 font-medium text-sm">➕ Nieuw model toevoegen</span>
+                      </div>
                       <div>
                         <label className="block text-xs font-medium text-gray-600 mb-1">
                           Model naam *
@@ -431,9 +427,31 @@ function IndienenForm() {
                         }}
                         className="text-sm text-gray-600 hover:text-gray-800"
                       >
-                        ← Kies uit bestaande modellen
+                        ✕ Nieuw model annuleren
                       </button>
                     </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setIsAddingNewModel(true)}
+                      className="w-full py-2 border-2 border-dashed border-primary-300 text-primary-700 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors text-sm font-medium"
+                    >
+                      + Mijn model staat er niet bij
+                    </button>
+                  )}
+
+                  {(selectedModels.length > 0 || isAddingNewModel) && (
+                    <p className="mt-2 text-xs text-gray-600">
+                      {isAddingNewModel && selectedModels.length > 0 && (
+                        <>Je handleiding geldt voor het nieuwe model + {selectedModels.length} geselecteerde model(len)</>
+                      )}
+                      {isAddingNewModel && selectedModels.length === 0 && (
+                        <>Je handleiding geldt voor het nieuwe model</>
+                      )}
+                      {!isAddingNewModel && selectedModels.length > 0 && (
+                        <>{selectedModels.length} model(len) geselecteerd</>
+                      )}
+                    </p>
                   )}
                 </div>
               )}
