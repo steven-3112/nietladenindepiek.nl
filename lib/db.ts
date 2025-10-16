@@ -150,6 +150,32 @@ export async function getAllBrands(includeAll = false) {
   return result.rows;
 }
 
+export async function getAllBrandsWithGuideCount(includeAll = false): Promise<Brand[]> {
+  const result = includeAll
+    ? await sql`
+        SELECT b.*, 
+               COUNT(DISTINCT g.id) as guide_count
+        FROM brands b
+        LEFT JOIN models m ON b.id = m.brand_id
+        LEFT JOIN guide_models gm ON m.id = gm.model_id
+        LEFT JOIN guides g ON gm.guide_id = g.id AND g.status = 'APPROVED'
+        GROUP BY b.id
+        ORDER BY b.name ASC
+      `
+    : await sql`
+        SELECT b.*, 
+               COUNT(DISTINCT g.id) as guide_count
+        FROM brands b
+        LEFT JOIN models m ON b.id = m.brand_id
+        LEFT JOIN guide_models gm ON m.id = gm.model_id
+        LEFT JOIN guides g ON gm.guide_id = g.id AND g.status = 'APPROVED'
+        WHERE b.status = 'APPROVED'
+        GROUP BY b.id
+        ORDER BY b.name ASC
+      `;
+  return result.rows as Brand[];
+}
+
 export async function getBrandBySlug(slug: string) {
   const result = await sql`
     SELECT * FROM brands WHERE slug = ${slug}
@@ -185,7 +211,18 @@ export async function updateBrand(id: number, name: string, slug: string, logoUr
 }
 
 export async function deleteBrand(id: number) {
-  await sql`DELETE FROM brands WHERE id = ${id}`;
+  const result = await sql`
+    DELETE FROM brands WHERE id = ${id}
+    RETURNING *
+  `;
+  return result.rows[0];
+}
+
+export async function getBrandById(id: number) {
+  const result = await sql`
+    SELECT * FROM brands WHERE id = ${id}
+  `;
+  return result.rows[0] || null;
 }
 
 // Model queries
@@ -320,6 +357,17 @@ export interface Guide {
   submitted_by_email: string;
   model_names: string[];
   created_at: string;
+}
+
+export interface Brand {
+  id: number;
+  name: string;
+  slug: string;
+  logo_url?: string;
+  status: string;
+  guide_count: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export async function getPendingGuides(): Promise<Guide[]> {

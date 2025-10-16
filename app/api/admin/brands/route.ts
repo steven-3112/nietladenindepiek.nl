@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions, hasRole } from '@/lib/auth';
-import { getAllBrands, createBrand, updateBrand, deleteBrand } from '@/lib/db';
+import { getAllBrandsWithGuideCount, createBrand, updateBrand, deleteBrand } from '@/lib/db';
 
 export async function GET() {
   try {
@@ -11,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const brands = await getAllBrands();
+    const brands = await getAllBrandsWithGuideCount(true);
     return NextResponse.json(brands);
   } catch (error) {
     console.error('Error fetching brands:', error);
