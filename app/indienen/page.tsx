@@ -223,8 +223,15 @@ function IndienenForm() {
       <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
         <header className="bg-white shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <Link href="/" className="text-primary-600 hover:text-primary-800">
-              ← Terug naar home
+            <Link href="/" className="flex items-center gap-3 text-primary-600 hover:text-primary-800">
+              <Image
+                src="/logo.png"
+                alt="Niet laden in de piek logo"
+                width={36}
+                height={36}
+                className="h-7 w-auto"
+              />
+              <span>← Terug naar home</span>
             </Link>
           </div>
         </header>
@@ -255,8 +262,15 @@ function IndienenForm() {
     <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link href="/" className="text-primary-600 hover:text-primary-800">
-            ← Terug naar home
+          <Link href="/" className="flex items-center gap-3 text-primary-600 hover:text-primary-800">
+            <Image
+              src="/logo.png"
+              alt="Niet laden in de piek logo"
+              width={32}
+              height={32}
+              className="h-6 w-auto"
+            />
+            <span>← Terug naar home</span>
           </Link>
         </div>
       </header>

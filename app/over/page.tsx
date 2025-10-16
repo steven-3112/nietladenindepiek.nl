@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -12,9 +13,18 @@ export default function OverPage() {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link href="/" className="text-primary-600 hover:text-primary-800">
-            ← Terug naar home
-          </Link>
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3 text-primary-600 hover:text-primary-800">
+              <Image
+                src="/logo.png"
+                alt="Niet laden in de piek logo"
+                width={36}
+                height={36}
+                className="h-7 w-auto"
+              />
+              <span>← Terug naar home</span>
+            </Link>
+          </div>
         </div>
       </header>
 

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getGuideWithSteps } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { FeedbackButtons } from '@/components/FeedbackButtons';
@@ -50,9 +51,16 @@ export default async function GuideDetailPage({ params }: PageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link
             href={`/handleiding/${params.brand}/${params.model}`}
-            className="text-primary-600 hover:text-primary-800"
+            className="flex items-center gap-3 text-primary-600 hover:text-primary-800"
           >
-            ← Terug naar handleidingen
+            <Image
+              src="/logo.png"
+              alt="Niet laden in de piek logo"
+              width={36}
+              height={36}
+              className="h-7 w-auto"
+            />
+            <span>← Terug naar handleidingen</span>
           </Link>
         </div>
       </header>
