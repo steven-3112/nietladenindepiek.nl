@@ -13,7 +13,7 @@ export default async function AdminLayout({
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect('/login');
+    redirect('/login?callbackUrl=' + encodeURIComponent('/admin'));
   }
 
   const userRoles = session.user.roles || [];
