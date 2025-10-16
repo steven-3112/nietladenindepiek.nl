@@ -1,4 +1,4 @@
-# Niet Laden in de Piek
+# Niet laden in de piek
 
 A crowdsourced platform to help EV owners configure their cars to avoid charging during peak hours (4PM-9PM), supporting the energy transition.
 

@@ -12,7 +12,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-primary-700">
-              Niet Laden in de Piek
+              Niet laden in de piek
             </h1>
             {session && (
               <Link

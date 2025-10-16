@@ -9,7 +9,7 @@ export async function sendNewSubmissionEmail(
 ) {
   try {
     await resend.emails.send({
-      from: 'Niet Laden in de Piek <noreply@nietladenindepiek.nl>',
+      from: 'Niet laden in de piek <noreply@nietladenindepiek.nl>',
       to: moderatorEmails,
       subject: 'Nieuwe handleiding ter goedkeuring',
       html: `
@@ -38,7 +38,7 @@ export async function sendApprovalEmail(
 
   try {
     await resend.emails.send({
-      from: 'Niet Laden in de Piek <noreply@nietladenindepiek.nl>',
+      from: 'Niet laden in de piek <noreply@nietladenindepiek.nl>',
       to: submitterEmail,
       subject: 'Je handleiding is goedgekeurd!',
       html: `
@@ -69,7 +69,7 @@ export async function sendRejectionEmail(
 
   try {
     await resend.emails.send({
-      from: 'Niet Laden in de Piek <noreply@nietladenindepiek.nl>',
+      from: 'Niet laden in de piek <noreply@nietladenindepiek.nl>',
       to: submitterEmail,
       subject: 'Je handleiding kon helaas niet worden goedgekeurd',
       html: `

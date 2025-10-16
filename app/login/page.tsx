@@ -42,7 +42,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="text-2xl font-bold text-primary-700">
-            Niet Laden in de Piek
+            Niet laden in de piek
           </Link>
           <p className="text-gray-600 mt-2">Admin login</p>
         </div>

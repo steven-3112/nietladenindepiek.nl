@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const canonicalUrl = `${baseUrl}/handleiding/${params.brand}/${params.model}`;
 
   return {
-    title: `${model.brand_name} ${model.name} laadtijden instellen | Niet Laden in de Piek`,
+    title: `${model.brand_name} ${model.name} laadtijden instellen | Niet laden in de piek`,
     description: `Leer hoe je jouw ${model.brand_name} ${model.name} zo instelt dat deze niet laadt tijdens piekuren (16:00-21:00). Handleidingen van gebruikers.`,
     keywords: `${model.brand_name}, ${model.name}, elektrische auto, laadtijden, piekuren, energienet`,
     alternates: {
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${model.brand_name} ${model.name} laadtijden instellen`,
       description: `Handleidingen voor het instellen van laadtijden op je ${model.brand_name} ${model.name}`,
       url: canonicalUrl,
-      siteName: 'Niet Laden in de Piek',
+      siteName: 'Niet laden in de piek',
       locale: 'nl_NL',
       type: 'website',
     },

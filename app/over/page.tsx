@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Over Niet Laden in de Piek | Het initiatief',
+  title: 'Over Niet laden in de piek | Het initiatief',
   description: 'Een initiatief van Steven Heitel om bij te dragen aan de energietransitie. Leer hoe deze website helpt om het energienet te ontlasten.',
 };
 
@@ -28,7 +28,7 @@ export default function OverPage() {
         <section className="prose prose-lg max-w-none mb-12">
           <div className="bg-white rounded-lg shadow-md p-8 mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Het verhaal achter Niet Laden in de Piek
+              Het verhaal achter Niet laden in de piek
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               Hoi! Ik ben <strong>Steven Heijtel</strong> en ik heb deze website gemaakt om mijn 
