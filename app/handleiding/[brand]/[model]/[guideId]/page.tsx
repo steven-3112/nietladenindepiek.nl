@@ -4,6 +4,8 @@ import { getGuideWithSteps } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { FeedbackButtons } from '@/components/FeedbackButtons';
 import { ImageModal } from '@/components/ImageModal';
+import { getServerSession } from 'next-auth';
+import { authOptions, hasRole } from '@/lib/auth';
 
 interface PageProps {
   params: {
@@ -15,6 +17,8 @@ interface PageProps {
 
 export default async function GuideDetailPage({ params }: PageProps) {
   const guide = await getGuideWithSteps(parseInt(params.guideId));
+  const session = await getServerSession(authOptions);
+  const isAdmin = session && hasRole(session.user.roles, 'MODERATOR');
 
   if (!guide || guide.status !== 'APPROVED') {
     notFound();
@@ -49,19 +53,32 @@ export default async function GuideDetailPage({ params }: PageProps) {
       <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link
-            href={`/handleiding/${params.brand}/${params.model}`}
-            className="flex items-center gap-3 text-primary-600 hover:text-primary-800"
-          >
-            <Image
-              src="/logo.png"
-              alt="Niet laden in de piek logo"
-              width={36}
-              height={36}
-              className="h-7 w-auto"
-            />
-            <span>← Terug naar handleidingen</span>
-          </Link>
+          <div className="flex items-center justify-between">
+            <Link
+              href={`/handleiding/${params.brand}/${params.model}`}
+              className="flex items-center gap-3 text-primary-600 hover:text-primary-800"
+            >
+              <Image
+                src="/logo.png"
+                alt="Niet laden in de piek logo"
+                width={36}
+                height={36}
+                className="h-7 w-auto"
+              />
+              <span>← Terug naar handleidingen</span>
+            </Link>
+            {isAdmin && (
+              <Link
+                href={`/admin/handleidingen?edit=${params.guideId}`}
+                className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Bewerken
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 

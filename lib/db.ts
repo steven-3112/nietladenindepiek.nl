@@ -389,9 +389,11 @@ export async function getGuideWithSteps(guideId: number): Promise<GuideWithSteps
 export interface Guide {
   id: number;
   submitted_by_name: string;
-  submitted_by_email: string;
+  submitted_by_email: string | null;
   model_names: string[];
+  status: string;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface Brand {
@@ -428,6 +430,20 @@ export async function getPendingGuides(): Promise<Guide[]> {
     JOIN brands b ON m.brand_id = b.id
     WHERE g.status = 'PENDING'
     GROUP BY g.id
+    ORDER BY g.created_at DESC
+  `;
+  return result.rows as Guide[];
+}
+
+export async function getAllGuides(): Promise<Guide[]> {
+  const result = await sql`
+    SELECT g.id, g.submitted_by_name, g.submitted_by_email, g.status, g.created_at, g.updated_at,
+           ARRAY_AGG(m.name || ' (' || b.name || ')') as model_names
+    FROM guides g
+    JOIN guide_models gm ON g.id = gm.guide_id
+    JOIN models m ON gm.model_id = m.id
+    JOIN brands b ON m.brand_id = b.id
+    GROUP BY g.id, g.submitted_by_name, g.submitted_by_email, g.status, g.created_at, g.updated_at
     ORDER BY g.created_at DESC
   `;
   return result.rows as Guide[];
@@ -486,6 +502,16 @@ export async function rejectGuide(guideId: number) {
   return result.rows[0];
 }
 
+export async function updateGuideStatus(guideId: number, status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'OFFLINE') {
+  const result = await sql`
+    UPDATE guides 
+    SET status = ${status}, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${guideId}
+    RETURNING *
+  `;
+  return result.rows[0];
+}
+
 export async function updateGuideFeedback(guideId: number, isHelpful: boolean) {
   if (isHelpful) {
     await sql`
@@ -498,5 +524,57 @@ export async function updateGuideFeedback(guideId: number, isHelpful: boolean) {
       WHERE id = ${guideId}
     `;
   }
+}
+
+export async function updateGuideDetails(
+  guideId: number, 
+  submittedByName: string, 
+  submittedByEmail: string | null
+) {
+  const result = await sql`
+    UPDATE guides 
+    SET submitted_by_name = ${submittedByName}, 
+        submitted_by_email = ${submittedByEmail},
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${guideId}
+    RETURNING *
+  `;
+  return result.rows[0];
+}
+
+export async function updateGuideStep(
+  stepId: number, 
+  stepNumber: number, 
+  description: string, 
+  imageUrl?: string
+) {
+  const result = await sql`
+    UPDATE guide_steps 
+    SET step_number = ${stepNumber}, 
+        description = ${description}, 
+        image_url = ${imageUrl || null},
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${stepId}
+    RETURNING *
+  `;
+  return result.rows[0];
+}
+
+export async function deleteGuideStep(stepId: number) {
+  await sql`DELETE FROM guide_steps WHERE id = ${stepId}`;
+}
+
+export async function addGuideStep(
+  guideId: number, 
+  stepNumber: number, 
+  description: string, 
+  imageUrl?: string
+) {
+  const result = await sql`
+    INSERT INTO guide_steps (guide_id, step_number, description, image_url)
+    VALUES (${guideId}, ${stepNumber}, ${description}, ${imageUrl || null})
+    RETURNING *
+  `;
+  return result.rows[0];
 }
 

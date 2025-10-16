@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getBrandBySlug, getModelsByBrand } from '@/lib/db';
+import { getBrandBySlug, getModelsByBrandWithGuideCount } from '@/lib/db';
 
 export async function GET(
   request: Request,
@@ -12,7 +12,7 @@ export async function GET(
       return NextResponse.json({ error: 'Brand not found' }, { status: 404 });
     }
 
-    const models = await getModelsByBrand(brand.id);
+    const models = await getModelsByBrandWithGuideCount(brand.id);
     return NextResponse.json(models);
   } catch (error) {
     console.error('Error fetching models:', error);

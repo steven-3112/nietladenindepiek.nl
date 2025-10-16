@@ -16,6 +16,7 @@ interface Model {
   name: string;
   slug: string;
   year_range: string;
+  guide_count: string; // Database returns this as string
 }
 
 // Car brand domain mapping for logo.dev
@@ -215,33 +216,80 @@ export function CarSelector() {
           </h3>
 
           {models.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {models.map((model) => (
-                <button
-                  key={model.id}
-                  onClick={() => handleModelClick(model.slug)}
-                  className="group bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-500 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 text-left"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className="font-bold text-lg text-gray-900 group-hover:text-primary-700 transition-colors mb-1">
-                        {model.name}
-                      </h4>
-                      {model.year_range && (
-                        <p className="text-sm text-gray-600">{model.year_range}</p>
-                      )}
-                    </div>
-                    <svg
-                      className="w-6 h-6 text-gray-400 group-hover:text-primary-600 transition-colors"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+            <div className="space-y-6">
+              {/* Models with guides */}
+              {models.filter(m => parseInt(m.guide_count) > 0).length > 0 && (
+                <div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {models.filter(model => parseInt(model.guide_count) > 0).map((model) => (
+                      <button
+                        key={model.id}
+                        onClick={() => handleModelClick(model.slug)}
+                        className="group bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-500 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 text-left"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-bold text-lg text-gray-900 group-hover:text-primary-700 transition-colors mb-1">
+                              {model.name}
+                            </h4>
+                            {model.year_range && (
+                              <p className="text-sm text-gray-600 mb-2">{model.year_range}</p>
+                            )}
+                            <p className="text-xs text-green-600 font-medium">
+                              {parseInt(model.guide_count)} handleiding{parseInt(model.guide_count) !== 1 ? 'en' : ''}
+                            </p>
+                          </div>
+                          <svg
+                            className="w-6 h-6 text-gray-400 group-hover:text-primary-600 transition-colors"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </button>
+                    ))}
                   </div>
-                </button>
-              ))}
+                </div>
+              )}
+
+              {/* Models without guides */}
+              {models.filter(m => parseInt(m.guide_count) === 0).length > 0 && (
+                <div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {models.filter(model => parseInt(model.guide_count) === 0).map((model) => (
+                      <button
+                        key={model.id}
+                        onClick={() => handleModelClick(model.slug)}
+                        className="group bg-gray-50 border border-gray-200 rounded-lg p-4 hover:border-gray-300 hover:shadow-md transition-all duration-200 hover:-translate-y-1 text-left"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors mb-1">
+                              {model.name}
+                            </h4>
+                            {model.year_range && (
+                              <p className="text-xs text-gray-500">{model.year_range}</p>
+                            )}
+                          </div>
+                          <svg
+                            className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500 mt-3 text-center">
+                    Geen handleiding voor jouw model? <span className="text-primary-600 font-medium">Voeg er een toe!</span>
+                  </p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
