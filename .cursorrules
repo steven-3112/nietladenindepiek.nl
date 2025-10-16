@@ -1,0 +1,104 @@
+# General Project Rules
+
+## Language Guidelines
+
+### Code & Documentation (English)
+- All code must be written in English: variable names, function names, class names, interfaces, types
+- All comments and inline documentation must be in English
+- All technical documentation (README files, API docs, etc.) must be in English
+- Git commit messages should be in English
+
+### Application Content (Dutch)
+- All user-facing text must be in Dutch: UI labels, buttons, notifications, error messages
+- Form labels, placeholders, and validation messages in Dutch
+- Email templates and user communications in Dutch
+- All content visible to end users must be in Dutch
+
+### Communication
+- When communicating with the developer, use Dutch
+
+## Code Quality Standards
+
+### TypeScript
+- Use TypeScript for all code to ensure type safety
+- Define explicit types for function parameters and return values
+- Avoid using `any` type; use `unknown` or proper types instead
+- Create interfaces or types for complex data structures
+
+### Clean Code Principles
+- Follow DRY (Don't Repeat Yourself): extract reusable logic into functions or modules
+- Apply SOLID principles where appropriate
+- Keep It Simple, Stupid (KISS): prefer simple solutions over complex ones
+- Write self-documenting code with clear, descriptive names
+- Add comments only for complex logic, algorithms, or non-obvious business decisions
+
+### Naming Conventions
+- Use descriptive, meaningful names that explain intent
+- Variables and functions: `camelCase` (e.g., `getUserById`, `isActive`)
+- Classes and interfaces: `PascalCase` (e.g., `UserService`, `ProductInterface`)
+- Constants: `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_ATTEMPTS`)
+- Private methods/properties: prefix with underscore if needed (e.g., `_internalMethod`)
+- Boolean variables: use `is`, `has`, `should` prefixes (e.g., `isLoading`, `hasPermission`)
+
+### Error Handling
+- Always handle errors appropriately; never leave empty catch blocks
+- Use try-catch for async operations
+- Provide meaningful error messages (in Dutch for user-facing errors)
+- Log errors with sufficient context for debugging
+- Use custom error classes when appropriate
+
+### Code Organization
+- Keep functions small and focused on a single responsibility
+- Maximum function length: aim for ~20-30 lines; refactor if longer
+- Group related functionality into modules or classes
+- Follow consistent file and folder structure
+- Separate concerns: business logic, data access, presentation
+
+## Best Practices
+
+### Functional Programming
+- Prefer functional programming patterns: map, filter, reduce over imperative loops
+- Use immutable data structures where possible
+- Avoid side effects in functions when possible
+- Use pure functions for business logic
+
+### Async Operations
+- Use `async/await` syntax instead of raw promises
+- Handle promise rejections properly
+- Avoid callback hell; use async/await or promise chaining
+- Use `Promise.all()` for parallel operations when possible
+
+### Validation & Security
+- Validate all user inputs
+- Sanitize data before processing
+- Use environment variables for sensitive configuration
+- Never commit secrets, API keys, or credentials to version control
+- Implement proper authentication and authorization
+
+### Performance
+- Avoid premature optimization; write clear code first
+- Optimize only when there's a measured performance issue
+- Use lazy loading for heavy resources
+- Implement proper caching strategies where appropriate
+- Consider pagination for large datasets
+
+### Code Style
+- Use consistent indentation (2 or 4 spaces, configure in project)
+- Follow ESLint and Prettier configurations if present
+- Keep lines reasonably short (~80-120 characters)
+- Use meaningful whitespace to separate logical blocks
+- Remove unused imports and dead code
+
+### Testing
+- Write tests for critical business logic
+- Use descriptive test names that explain what is being tested
+- Follow AAA pattern: Arrange, Act, Assert
+- Mock external dependencies in unit tests
+
+## Code Review Mindset
+- Write code as if the next person to read it knows where you live
+- Code should be self-explanatory; if it needs extensive comments, consider refactoring
+- Think about maintainability: will you understand this code in 6 months?
+- Consider edge cases and error scenarios
+- Leave the codebase better than you found it
+
