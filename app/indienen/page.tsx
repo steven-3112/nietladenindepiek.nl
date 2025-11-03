@@ -46,6 +46,40 @@ function IndienenForm() {
   const [submitted, setSubmitted] = useState(false);
   const [agreedToLicense, setAgreedToLicense] = useState(false);
 
+  async function compressImage(
+    file: File,
+    maxDimension: number = 1600,
+    quality: number = 0.8
+  ): Promise<File> {
+    const imageBitmap = await createImageBitmap(file);
+    const width = imageBitmap.width;
+    const height = imageBitmap.height;
+    const scale = Math.min(1, maxDimension / Math.max(width, height));
+    const targetWidth = Math.round(width * scale);
+    const targetHeight = Math.round(height * scale);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file;
+    ctx.drawImage(imageBitmap, 0, 0, targetWidth, targetHeight);
+
+    const blob: Blob = await new Promise((resolve) =>
+      canvas.toBlob(
+        (b) => resolve(b || file),
+        'image/jpeg',
+        quality
+      )
+    );
+
+    if (!(blob instanceof Blob)) return file;
+    return new File([blob], file.name.replace(/\.(png|jpg|jpeg|webp)$/i, '.jpg'), {
+      type: 'image/jpeg',
+      lastModified: Date.now(),
+    });
+  }
+
   useEffect(() => {
     fetchBrands();
   }, []);
@@ -114,12 +148,25 @@ function IndienenForm() {
     newSteps[index].imageFile = file;
     
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        newSteps[index].imagePreview = reader.result as string;
-        setSteps([...newSteps]);
-      };
-      reader.readAsDataURL(file);
+      (async () => {
+        try {
+          const compressed = await compressImage(file, 1600, 0.8);
+          newSteps[index].imageFile = compressed;
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            newSteps[index].imagePreview = reader.result as string;
+            setSteps([...newSteps]);
+          };
+          reader.readAsDataURL(compressed);
+        } catch {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            newSteps[index].imagePreview = reader.result as string;
+            setSteps([...newSteps]);
+          };
+          reader.readAsDataURL(file);
+        }
+      })();
     } else {
       newSteps[index].imagePreview = null;
       setSteps(newSteps);
