@@ -157,6 +157,29 @@ export function GuideManager({ initialGuides }: GuideManagerProps) {
     }
   }
 
+  async function deleteGuidePermanently(guideId: number) {
+    if (!confirm('Weet je zeker dat je deze handleiding PERMANENT wilt verwijderen? Dit kan niet ongedaan worden gemaakt.')) {
+      return;
+    }
+    try {
+      const response = await fetch(`/api/admin/guides/${guideId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setGuides(guides.filter(g => g.id !== guideId));
+        if (expandedGuide === guideId) {
+          setExpandedGuide(null);
+          setGuideDetails(null);
+        }
+      } else {
+        alert('Verwijderen mislukt.');
+      }
+    } catch (error) {
+      console.error('Error deleting guide:', error);
+      alert('Er ging iets mis bij het verwijderen.');
+    }
+  }
+
   function getStatusAction(status: string): string {
     switch (status) {
       case 'PENDING': return 'terugzetten naar wachtend';
@@ -352,6 +375,12 @@ export function GuideManager({ initialGuides }: GuideManagerProps) {
                         🔒 Offline
                       </button>
                     )}
+                  <button
+                    onClick={() => deleteGuidePermanently(guide.id)}
+                    className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white font-semibold rounded-lg transition-colors"
+                  >
+                    🗑️ Verwijderen
+                  </button>
                   </div>
                 </div>
               )}

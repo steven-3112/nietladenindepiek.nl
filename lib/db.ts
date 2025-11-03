@@ -578,3 +578,8 @@ export async function addGuideStep(
   return result.rows[0];
 }
 
+export async function deleteGuide(guideId: number) {
+  // Due to ON DELETE CASCADE on related tables, deleting the guide removes steps and junctions
+  await sql`DELETE FROM guides WHERE id = ${guideId}`;
+}
+
