@@ -37,10 +37,14 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
 
 export async function POST(request: Request) {
   try {
-    const { submitterName, submitterEmail, modelIds, steps, recaptchaToken, newBrand, newModel } = await request.json();
+    const { submitterName, submitterEmail, modelIds, steps, recaptchaToken, newBrand, newModel, agreedToLicense } = await request.json();
 
     if (!submitterName || !steps || steps.length === 0) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+    }
+
+    if (!agreedToLicense) {
+      return NextResponse.json({ error: 'License agreement is required' }, { status: 400 });
     }
 
     if (!newModel && (!modelIds || modelIds.length === 0)) {

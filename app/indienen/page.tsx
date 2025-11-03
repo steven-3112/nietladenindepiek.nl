@@ -44,6 +44,7 @@ function IndienenForm() {
   ]);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [agreedToLicense, setAgreedToLicense] = useState(false);
 
   useEffect(() => {
     fetchBrands();
@@ -128,6 +129,11 @@ function IndienenForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     
+    if (!agreedToLicense) {
+      alert('Je moet akkoord gaan met de licentie om in te dienen');
+      return;
+    }
+
     if (!isAddingNewModel && selectedModels.length === 0) {
       alert('Selecteer minimaal één model of voeg een nieuw model toe');
       return;
@@ -196,6 +202,7 @@ function IndienenForm() {
           modelIds: selectedModels,
           steps: stepsData,
           recaptchaToken,
+          agreedToLicense: true,
           // New brand/model data if adding new ones
           newBrand: isAddingNewBrand ? { name: newBrandName } : null,
           newModel: isAddingNewModel ? { 
@@ -549,6 +556,22 @@ function IndienenForm() {
 
           {/* Submit */}
           <div className="bg-white rounded-lg shadow-md p-6">
+            <label className="flex items-start gap-3 mb-4 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreedToLicense}
+                onChange={(e) => setAgreedToLicense(e.target.checked)}
+                className="mt-1 w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                required
+              />
+              <span className="text-sm text-gray-700">
+                Ik ga ermee akkoord dat deze handleiding op nietladenindepiek.nl gepubliceerd wordt en onderdeel wordt van de{' '}
+                <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800 underline">
+                  CC BY-SA 4.0
+                </a>
+                {' '}licentie.
+              </span>
+            </label>
             <button
               type="submit"
               disabled={loading}
