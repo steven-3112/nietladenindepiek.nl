@@ -573,11 +573,10 @@ function IndienenForm() {
                       <input
                         type="file"
                         accept="image/*"
-                        capture="environment"
                         onChange={(e) => handleStepImageChange(index, e.target.files?.[0] || null)}
                         className="w-full text-sm text-gray-600"
                       />
-                      <p className="text-xs text-gray-500 mt-1">Je kunt ook direct een foto maken met je camera.</p>
+                      <p className="text-xs text-gray-500 mt-1">Kies uit je fotobibliotheek of maak direct een foto.</p>
                       {step.imagePreview && (
                         <div className="mt-4 relative w-full max-w-md h-48">
                           <Image
