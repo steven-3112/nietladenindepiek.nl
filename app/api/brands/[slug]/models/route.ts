@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getBrandBySlug, getModelsByBrandWithGuideCount } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
@@ -13,7 +15,11 @@ export async function GET(
     }
 
     const models = await getModelsByBrandWithGuideCount(brand.id);
-    return NextResponse.json(models);
+    return NextResponse.json(models, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
   } catch (error) {
     console.error('Error fetching models:', error);
     return NextResponse.json({ error: 'Failed to fetch models' }, { status: 500 });
