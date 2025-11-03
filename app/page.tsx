@@ -47,12 +47,12 @@ export default async function Home() {
             <p className="text-xl mb-6">
               Tussen <strong className="text-primary-700">16:00 en 21:00 uur</strong> is
               de vraag naar elektriciteit op het hoogst. Als veel mensen dan hun
-              elektrische auto laden, komt het energienet onder druk te staan.
+              elektrische auto laden komt het energienet onder druk te staan.
             </p>
             <p className="text-lg mb-6">
-              Door je auto <em>buiten deze piektijden</em> te laden, help je mee aan een
+              Door je auto <em>buiten deze piektijden</em> te laden help je mee aan een
               stabiel energienet en een succesvollere energietransitie. Bovendien is
-              stroom buiten de piek vaak goedkoper!
+              stroom buiten de piek vaak goedkoper.
             </p>
             <div className="bg-secondary-50 border-l-4 border-secondary-500 p-6 my-8">
               <p className="text-lg font-semibold text-secondary-900 mb-2">
