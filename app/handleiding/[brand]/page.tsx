@@ -108,7 +108,10 @@ export default async function BrandPage({ params }: PageProps) {
                   ))}
                 </div>
                 <p className="text-sm text-gray-500 mt-3 text-center">
-                  Geen handleiding voor jouw model? <span className="text-primary-600 font-medium">Voeg er een toe!</span>
+                  Geen handleiding voor jouw model?{' '}
+                  <Link href="/indienen" className="text-primary-600 font-medium hover:text-primary-800 underline">
+                    Voeg er één toe!
+                  </Link>
                 </p>
               </section>
             )}
