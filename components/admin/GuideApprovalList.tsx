@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import { ImageModal } from '@/components/ImageModal';
 import { Guide } from '@/lib/db';
 
 interface GuideModel {
@@ -165,14 +165,8 @@ export function GuideApprovalList({ initialGuides }: GuideApprovalListProps) {
                               {step.description}
                             </p>
                             {step.image_url && (
-                              <div className="relative w-full max-w-md h-48 rounded-lg overflow-hidden">
-                                <Image
-                                  src={step.image_url}
-                                  alt={`Stap ${step.step_number}`}
-                                  fill
-                                  className="object-contain"
-                                  sizes="(max-width: 768px) 100vw, 448px"
-                                />
+                              <div className="w-full max-w-md">
+                                <ImageModal src={step.image_url} alt={`Stap ${step.step_number}`} />
                               </div>
                             )}
                           </div>

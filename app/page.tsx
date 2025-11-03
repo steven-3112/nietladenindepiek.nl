@@ -12,7 +12,7 @@ export default async function Home() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3">
               <Image
                 src="/logo.png"
                 alt="Niet laden in de piek logo"
@@ -24,7 +24,7 @@ export default async function Home() {
               <h1 className="text-2xl font-bold text-primary-700">
                 Niet laden in de piek
               </h1>
-            </div>
+            </Link>
             {session && (
               <Link
                 href="/admin"

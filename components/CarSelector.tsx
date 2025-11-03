@@ -235,9 +235,10 @@ export function CarSelector() {
                             {model.year_range && (
                               <p className="text-sm text-gray-600 mb-2">{model.year_range}</p>
                             )}
-                            <p className="text-xs text-green-600 font-medium">
+                            <div className="inline-flex items-center gap-2 text-xs font-medium text-green-700 bg-green-100 border border-green-200 px-2.5 py-1 rounded-full">
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-600"></span>
                               {parseInt(model.guide_count)} handleiding{parseInt(model.guide_count) !== 1 ? 'en' : ''}
-                            </p>
+                            </div>
                           </div>
                           <svg
                             className="w-6 h-6 text-gray-400 group-hover:text-primary-600 transition-colors"
@@ -270,8 +271,12 @@ export function CarSelector() {
                               {model.name}
                             </h4>
                             {model.year_range && (
-                              <p className="text-xs text-gray-500">{model.year_range}</p>
+                              <p className="text-xs text-gray-500 mb-1">{model.year_range}</p>
                             )}
+                            <div className="inline-flex items-center gap-2 text-[11px] font-medium text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full">
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-500"></span>
+                              Geen handleiding
+                            </div>
                           </div>
                           <svg
                             className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors"
