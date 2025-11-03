@@ -105,7 +105,8 @@ export function CarSelector() {
   }
 
   function handleBrandClick(brand: Brand) {
-    setSelectedBrand(brand);
+    // Navigate to brand-specific URL so the browser back button works as expected
+    router.push(`/handleiding/${brand.slug}`);
   }
 
   function handleModelClick(modelSlug: string) {
