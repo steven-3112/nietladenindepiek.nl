@@ -59,8 +59,7 @@ export default async function Home() {
                 💡 Dit is vooral relevant als je thuis laadt op je eigen oprit
               </p>
               <p className="text-base text-secondary-800">
-                Bij publieke laadpalen zijn de tijden vaak beperkt. Thuis heb je de
-                vrijheid om te kiezen wanneer je laadt!
+                Thuis heb je immers de vrijheid om te kiezen wanneer je laadt.
               </p>
             </div>
           </div>
